@@ -99,6 +99,10 @@ if type_tickers and st.button("Download data"):
 
 if not session_state.data.empty:
 
+    count_nulls = session_state.data.isna().sum()
+    st.write(f"Total of missing entries: {count_nulls.sum()}")
+    st.dataframe(count_nulls.to_frame().T)
+
     st.dataframe(session_state.data)
 
     charts = Plots(session_state.data)
