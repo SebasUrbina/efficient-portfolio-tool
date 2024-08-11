@@ -17,13 +17,13 @@ from modules.assets import AssetManager
 from modules.utils import SessionState
 from modules.data import download_data
 from modules.plots import Plots
+from modules.portfolio import *
 
 @st.cache(allow_output_mutation=True)
 def get_session():
     return SessionState()
 
 session_state = get_session()
-session_state.data = pd.DataFrame()
 
 # Streamlit APP
 st.title("Efficient Portfolio Tool")
@@ -106,3 +106,39 @@ if not session_state.data.empty:
     charts.plot_log_returns()
 
     charts.plot_return_over_time()
+
+    st.subheader('Assets Allocation', divider='rainbow')
+
+    invested_cash = st.number_input('Enter invested cash', min_value=1, max_value=None, value=1000)
+
+    st.subheader('Optimization', divider='rainbow')
+
+    c1, c2 = st.columns([1,3], vertical_alignment='bottom')
+    
+    with c1:
+        trading_days = st.number_input('Please Select timeframe for returns', min_value=1, max_value=365, value=252)
+        resampler = st.selectbox('Select Timeframe:', ['A', 'AS', 'BA', 'BAS', '3M', '4M', '6M', '12M', 'Q', 'BQ', 'QS', 'BQS', 'M', 'BM', 'MS', 'BMS', 'W', 'D'], index=0)
+        risk_free_rate = st.number_input('Please Select risk free rate', min_value=0.0, max_value=1.0, value=0.05)
+        risk_taken = st.number_input('Please Select anualized risk of investment:', min_value=0.0, max_value=1.0, value=0.1)
+        expected_return = st.number_input('Please Select anualized expected returns', min_value=0.0, max_value=1.0, value=0.15)
+        simulated_portfolios = st.number_input('Please Select anualized expected returns', min_value=1, max_value=10000, value=1000)
+
+        run_simulation = st.button('Run simulations')
+    with c2:
+        if run_simulation:
+            simulated_portfolios = efficient_frontier(
+                session_state.data.filter(like='_Close'), 
+                trading_days, 
+                risk_free_rate,
+                simulations= simulated_portfolios, 
+                resampler=resampler
+            )
+            
+            # st.write(simulated_portfolios)
+
+            charts.plot_efficient_frontier(
+                simulated_portfolios=simulated_portfolios, 
+                expected_sharpe=1, 
+                expected_return=expected_return, 
+                risk_taken=risk_taken
+                )
