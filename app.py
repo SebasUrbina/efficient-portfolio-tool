@@ -14,7 +14,7 @@ import plotly.graph_objects as go
 
 # Customs modules
 from modules.assets import AssetManager
-from modules.utils import SessionState
+from modules.utils import SessionState, Resampler
 from modules.data import download_data
 from modules.plots import Plots
 from modules.portfolio import *
@@ -151,9 +151,11 @@ if not session_state.data.empty:
 
     c1, c2 = st.columns([1,3], vertical_alignment='bottom')
     
+    res = Resampler()
     with c1:
         trading_days = st.number_input('Please Select timeframe for returns', min_value=1, max_value=365, value=252)
-        resampler = st.selectbox('Select Timeframe:', ['A', 'AS', 'BA', 'BAS', '3M', '4M', '6M', '12M', 'Q', 'BQ', 'QS', 'BQS', 'M', 'BM', 'MS', 'BMS', 'W', 'D'], index=0)
+        resampler_options =  list(res.name_to_abbr.keys())
+        selected_resampler = st.selectbox('Select Timeframe:', resampler_options, index=0)
         risk_free_rate = st.number_input('Please Select risk free rate', min_value=0.0, max_value=1.0, value=0.05)
         risk_taken = st.number_input('Please Select anualized risk of investment:', min_value=0.0, max_value=1.0, value=0.1)
         expected_return = st.number_input('Please Select anualized expected returns', min_value=0.0, max_value=1.0, value=0.15)
@@ -167,7 +169,7 @@ if not session_state.data.empty:
                 trading_days, 
                 risk_free_rate,
                 simulations= simulated_portfolios, 
-                resampler=resampler
+                resampler=res.get_abbr(selected_resampler)
             )
             
             # st.write(simulated_portfolios)
