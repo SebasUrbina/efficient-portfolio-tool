@@ -103,9 +103,8 @@ if not session_state.data.empty:
 
     charts = Plots(session_state.data)
 
-    charts.plot_log_returns()
-
     charts.plot_return_over_time()
+    charts.plot_log_returns()
 
     st.subheader('Assets Allocation', divider='rainbow')
 
