@@ -89,7 +89,7 @@ class Plots:
             simulated_portfolios, 
             x='Volatility', 
             y='Returns', 
-            width=800, 
+            width=1200, 
             height=600, 
             title="Markowitz's Efficient Frontier", 
             labels={'Volatility': 'Volatility', 'Returns': 'Return'},
