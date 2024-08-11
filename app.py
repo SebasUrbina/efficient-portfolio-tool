@@ -2,7 +2,7 @@ import streamlit as st
 import numpy as np  
 import pandas as pd
 from datetime import date
-
+st.set_page_config(layout='wide')
 # Libraries for retrieving and downloading data
 import requests 
 from io import BytesIO
@@ -23,6 +23,34 @@ def get_session():
 
 session_state = get_session()
 session_state.data = pd.DataFrame()
+
+# Streamlit APP
+st.title("Efficient Portfolio Tool")
+st.header("Pick your assets", divider="rainbow")
+
+
+with st.sidebar:
+    st.subheader("Times Series Resampler")
+
+    freq_to_resample = st.selectbox('Freq to resample:', ['Daily','Weekly','Quartely','Monthly'], index=1)
+    aggregation = st.selectbox('Aggregation', ['sum', 'mean', 'median', 'valor exacto'], index=1)
+
+    if st.button('Resample Dataframe'):
+        pass
+
+    st.subheader("Moving Average")
+
+    days = st.number_input('Day(s)', min_value=1, max_value=100, value=3)
+    method = st.selectbox('Method', ['gap', 'rolling'], index=1)
+
+    if st.button('Apply'):
+        pass
+
+    st.subheader('Missing Values')
+
+    if st.button('Drop NAs'):
+        pass
+
 
 # select box widget to choose timeframes
 selected_timeframes = st.selectbox('Select Timeframe:', ['1d', '5d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max'], index=7)
