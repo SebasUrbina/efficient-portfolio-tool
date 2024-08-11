@@ -16,6 +16,7 @@ import plotly.graph_objects as go
 from modules.assets import AssetManager
 from modules.utils import SessionState
 from modules.data import download_data
+from modules.plots import Plots
 
 @st.cache(allow_output_mutation=True)
 def get_session():
@@ -49,6 +50,7 @@ with st.sidebar:
     st.subheader('Missing Values')
 
     if st.button('Drop NAs'):
+        session_state.data = session_state.data.dropna()
         pass
 
 
@@ -96,4 +98,11 @@ if type_tickers and st.button("Download data"):
     session_state.data = download_data(tickers, selected_timeframes)
 
 if not session_state.data.empty:
+
     st.dataframe(session_state.data)
+
+    charts = Plots(session_state.data)
+
+    charts.plot_log_returns()
+
+    charts.plot_return_over_time()
