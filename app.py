@@ -110,6 +110,39 @@ if not session_state.data.empty:
 
     invested_cash = st.number_input('Enter invested cash', min_value=1, max_value=None, value=1000)
 
+    if type_tickers:
+        weights_df = pd.DataFrame([{'Tickers': ticker.strip(), 'Weights': None} for ticker in type_tickers.split(',')])
+        session_state.weights = st.data_editor(
+            weights_df,
+            column_config={
+                "Weights": st.column_config.NumberColumn(
+                    "Your weight",
+                    help="How much weight do you give to that asset",
+                    min_value=0.0,
+                    max_value=1.0,
+                    format="%f"
+                )
+            },
+            hide_index=False
+        )
+    else:
+        weights_df = pd.DataFrame([{'Tickers': ticker.strip(), 'Weights': None} for ticker in tickers])
+        session_state.weights = st.data_editor(
+            weights_df,
+            column_config={
+                "Weights": st.column_config.NumberColumn(
+                    "Your weight",
+                    help="How much weight do you give to that asset",
+                    min_value=0.0,
+                    max_value=1.0,
+                    format="%f"
+                )
+            },
+            hide_index=False
+        )
+    
+    st.write(f"Missing alocation: {(1 - session_state.weights['Weights'].sum()):.2f}")
+
     st.subheader('Optimization', divider='rainbow')
 
     c1, c2 = st.columns([1,3], vertical_alignment='bottom')
